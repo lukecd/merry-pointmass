@@ -4,6 +4,7 @@ import Query from "@irys/query";
 import dotenv from "dotenv";
 dotenv.config();
 
+// Connect to an Irys node
 const getIrys = async () => {
 	const key = process.env.PRIVATE_KEY;
 	const token = "matic";
@@ -17,11 +18,10 @@ const getIrys = async () => {
 	return irys;
 };
 
-// Function to check eligibility
+// Check eligibility: can only use once a day
 export const isEligible = async (address) => {
 	return true;
 
-	// Get the current date at the time of running the script
 	const currentDate = new Date();
 
 	// Reset the time to 00:00:00.000 for the start of the day
@@ -40,6 +40,7 @@ export const isEligible = async (address) => {
 	);
 	const toTimestamp = endOfDay.getTime();
 
+	// See if any points have been posted "today"
 	const myQuery = new Query({ url: "https://node2.irys.xyz/graphql" });
 	const results = await myQuery
 		.search("irys:transactions")
@@ -56,13 +57,13 @@ export const isEligible = async (address) => {
 	return results.length === 0;
 };
 
-// Function to get random points
+// Get random points, not very secure, but it works
 export const getRandomPoints = () => {
 	// Generate random integer between 42 and 420
 	return Math.floor(Math.random() * (420 - 42 + 1)) + 42;
 };
 
-// Function to store points on Irys and return receipt
+// Store points on Irys & return receipt
 export const storePointsOnIrys = async (points, address) => {
 	// Combine with any existing tags
 	const tags = [
@@ -76,12 +77,13 @@ export const storePointsOnIrys = async (points, address) => {
 	return receipt;
 };
 
-// Function to get total points
+// Parse out points
 function getPointsValue(tags) {
 	const pointsTag = tags.find((tag) => tag.name === "points");
 	return pointsTag ? parseInt(pointsTag.value, 10) : 0;
 }
 
+// Get total points tied to a wallet address
 export const getTotalPoints = async (address) => {
 	const myQuery = new Query({ url: "https://node2.irys.xyz/graphql" });
 	const results = await myQuery

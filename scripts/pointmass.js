@@ -16,7 +16,8 @@ const truncateString = (str, num) => {
 	return str.slice(0, num) + "..." + str.slice(-num);
 };
 
-const activeDay = 21; // Example active day
+// To make things easier for the demo, I've hardcoded the date
+const activeDay = 21;
 
 // Create a screen object for blessed
 const screen = blessed.screen({
@@ -24,9 +25,9 @@ const screen = blessed.screen({
 	title: "Holiday Calendar",
 });
 
-const dayBoxWidth = 6; // Width of each day box
-const dayBoxHeight = 3; // Height of each day box
-const BORDER_PADDING = 2; // Border padding size for the calendar box
+const dayBoxWidth = 6;
+const dayBoxHeight = 3;
+const BORDER_PADDING = 2;
 
 // Festive color palette
 const palette = {
@@ -66,16 +67,16 @@ figlet(
 
 		// Create a box for the "Merry Pointmass" title
 		const titleBox = blessed.box({
-			top: 0, // Position at the top of the screen
+			top: 0,
 			left: "center",
-			width: "100%", // Span the entire width
-			height: asciiArt.split("\n").length, // The height of the figlet text
+			width: "100%",
+			height: asciiArt.split("\n").length,
 			content: asciiArt,
 			tags: true,
 			align: "center",
 			valign: "middle",
 			style: {
-				fg: "red", // Festive red color for the title
+				fg: "red",
 				bg: palette.background,
 			},
 		});
@@ -169,7 +170,7 @@ figlet(
 		const holidayRed = "red";
 		const startAnimation = async (activeDay) => {
 			// Get all day boxes
-			const dayBoxes = calendarBox.children.slice(); // Clone the array
+			const dayBoxes = calendarBox.children.slice();
 			const activeDayString = activeDay.toString();
 
 			// Find the active day box and get its color
@@ -181,7 +182,6 @@ figlet(
 						.trim() === activeDayString,
 			);
 			const activeColor = holidayRed;
-			//activeBox.style.bg;
 
 			// Turn off lights randomly over 3 seconds for inactive day boxes
 			const totalDuration = 3000; // Total duration of the animation
@@ -219,7 +219,6 @@ figlet(
 
 			setTimeout(() => {
 				// Change the background color of the calendarBox
-
 				calendarBox.style.bg = holidayRed;
 
 				// Clear content of all boxes (to simulate turning them back on with no numbers)
@@ -229,9 +228,7 @@ figlet(
 				});
 
 				// Ensure the active day box is still visible
-				// activeBox.setContent(activeDayString);
 				activeBox.style.bg = holidayRed;
-				// activeBox.style.fg = palette.dayColor;
 
 				// Render the changes
 				screen.render();
@@ -240,37 +237,34 @@ figlet(
 			setTimeout(() => {
 				calendarBox.style.bg = holidayRed;
 
-				// 1. Remove the number from the active day
 				activeBox.setContent("");
-				// Render the changes
 				screen.render();
 				performAction();
 			}, 3100);
 		};
 
-		// const message = `Welcome to day ${activeDay} of Pointmass, ready to see what you're getting today?\n\nPress space to continue.`;
 		const messageBox = blessed.text({
-			parent: screen, // Parent it directly to the screen, not calendarBox
-			top: titleBox.height + 1, // Position it right below the titleBox
+			parent: screen,
+			top: titleBox.height + 1,
 			left: "center",
 			width: "100%",
 			height: "100%-1", // Full screen height minus one for the titleBox height
 			content: "",
 			tags: true,
-			align: "left", // Align text to the left
-			valign: "top", // Align text to the top
+			align: "left",
+			valign: "top",
 			scrollable: true,
 			alwaysScroll: true,
 			keys: true,
 			vi: true,
-			mouse: true, // If you want to enable mouse scrolling as well
+			mouse: true,
 			style: {
-				fg: "white", // Text color
-				bg: palette.background, // Background color
+				fg: "white",
+				bg: palette.background,
 			},
 		});
 
-		screen.append(messageBox); // Append the messageBox to the screen
+		screen.append(messageBox);
 
 		messageBox.hide();
 
@@ -281,10 +275,10 @@ figlet(
 		};
 		let currentContent = "";
 		const appendContent = (newContent) => {
-			currentContent += (currentContent ? "\n" : "") + newContent; // Append with new line if not empty
-			messageBox.setContent(currentContent); // Set the new content
-			messageBox.setScrollPerc(100); // Scroll to the bottom to show latest content
-			screen.render(); // Render the updated screen
+			currentContent += (currentContent ? "\n" : "") + newContent;
+			messageBox.setContent(currentContent);
+			messageBox.setScrollPerc(100);
+			screen.render();
 		};
 
 		// Display messages and perform actions based on the current step
@@ -298,7 +292,6 @@ figlet(
 				case 1:
 					// Remove the calendar
 					calendarBox.detach();
-					// Adjust messageBox to full screen, below the titleBox
 					messageBox.top = titleBox.height + 1;
 					messageBox.width = "100%";
 					messageBox.height = "100%-1";
@@ -342,11 +335,11 @@ figlet(
 					displayMessage(`You have ${totalPoints} total points,  come back tomorrow to earn more.`);
 					break;
 				case 5:
-					return process.exit(0); // Exit the application
+					return process.exit(0);
 					break;
 				default:
 					// Reset or end the process
-					stepCounter = -1;
+					return process.exit(0);
 					break;
 			}
 			stepCounter++;
